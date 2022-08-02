@@ -1,13 +1,9 @@
-const express=require("express");
+import { Router } from "express";
+import { login, register } from "../controllers/auth.js";
 
-const router=express.Router();
+const router = Router();
 
-router.get("/",(req,res)=>{
-    res.send("This is auth page")
-})
+router.post("/register", register);
+router.post("/login", login);
 
-router.get("/register",(req,res)=>{
-    res.send("This is register page")
-})
-
-module.exports=router;
+export default router;

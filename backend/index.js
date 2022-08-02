@@ -1,18 +1,18 @@
-const express = require("express");
+import express from "express";
 const app = express();
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const authRoute = require("./routes/auth.js");
-const userRoute = require("./routes/users.js");
-const hotelRoute = require("./routes/hotels.js");
-const roomRoute = require("./routes/rooms.js");
+import authRoute from "./routes/auth.js";
+import userRoute from "./routes/users.js";
+import hotelRoute from "./routes/hotels.js";
+import roomRoute from "./routes/rooms.js";
 
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO);
-    console.log("Connected to MongoDB")
+    console.log("Connected to MongoDB");
   } catch (error) {
     throw error;
   }
@@ -23,14 +23,25 @@ const connect = async () => {
 // })
 
 //middlewares
-app.use(express.json())
+app.use(express.json());
 
 app.use("/auth", authRoute);
 app.use("/users", userRoute);
 app.use("/hotels", hotelRoute);
 app.use("/rooms", roomRoute);
 
+app.use((err, req, res, next) => {
+  const errorStatus = err.status || 500;
+  const errorMessage = err.message || "Something went wrong!";
+  return res.status(errorStatus).json({
+    success: false,
+    status: errorStatus,
+    message: errorMessage,
+    stack: err.stack,
+  });
+});
+
 app.listen(8080, () => {
-  connect()
+  connect();
   console.log(`Backend listening on port 8080`);
 });
